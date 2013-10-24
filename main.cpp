@@ -1,36 +1,33 @@
 #include <iostream>
-#include <stdio.h>
-#include <conio.h>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
-// FunÁ„o para criar uma mensagem
-bool create_message(char message[100], char filename[100])
+// Fun√ß√£o para criar uma mensagem
+bool create_message(string message, string filename)
 {
-   FILE *arq;
-   arq = fopen(filename, "wt");
+   ofstream arq;
+   arq.open("text.txt"); // fix: Colocar uma variavel para cria√ß√£o de v√°rias mensagens
    int i=0;
-
    if (arq == NULL)  // Se houve erro na abertura
    {
        return false;
    }
    else
    {
-        for(i=0; message[i]; i++) putc(message[i], arq); /* Grava a string, caractere a caractere */
+        arq << message; /* Grava a string, caractere a caractere */
+        arq.close();
         return true;
    }
-   fclose(arq);
 }
 
-// FunÁ„o principal
+// Fun√ß√£o principal
 int main()
 {
-    char message[100] = "";
-    char filename[100] = "";
-    cin >> message;
-    cin >> filename;
+    string message = "", filename = "";
+    getline(cin, filename);
+    getline(cin, message);
     // Abre um arquivo TEXTO para LEITURA
     if (create_message(message, filename))  // Se houve erro na abertura
     {
