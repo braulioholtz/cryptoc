@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdlib.h>
+#include <dirent.h>
 #include <string>
 #include <fstream>
 
@@ -42,6 +44,22 @@ string read_message(string filename)
     }
     return letra;
 }
+
+// Listar arquivos já criptografados
+void lista_txt()
+{
+    /*DIR *dir;
+    dir = opendir("criptografia/");
+
+    while ( ( lsdir = readdir(dir) ) != NULL )
+    {
+        printf ("%s\n", lsdir->d_name);
+    }
+
+    closedir(dir);*/
+}
+
+
 // Função para criptografar a mensagem
 string Encrypt(string filename)
 {
@@ -69,23 +87,43 @@ int check()
 // Função principal
 int main()
 {
-    int p = 0, q = 0, phi = 0;
+    int p = 0, q = 0, phi = 0, menu = 0;
     string message = "", filename = "";
-    cout << "Digite o nome do arquivo:\n";
-    getline(cin, filename);
-    cout << "Digite a sua mensagem:\n";
-    getline(cin, message);
-    // Abre um arquivo TEXTO para LEITURA
-    if (create_message(message, filename))  // Se houve erro na abertura
-    {
-        cout << "Arquivo criado com exito\n";
 
-    }
-    else
-    {
-        cout << "Problemas na abertura do arquivo\n";
-    }
+    do {
+        system("cls");
+        cout << "Menu: \n1 - criar texto criptogrado\n2 - ler texto criptografado\n3 - Listar Arquivos criptografados e descriptografar\n";
+        cin >> menu;
+        fflush(stdin); // Corrigir o bug na entrada de dados
+        if (menu==1)
+        {
+            system("cls");
+            cout << "Digite o nome do arquivo:\n";
+            getline(cin, filename);
+            fflush(stdin);
+            cout << "Digite a sua mensagem:\n";
+            getline(cin, message);
+            fflush(stdin);
+            //getline(cin, message);
+            if (create_message(message, filename))  // Se houve erro na abertura
+            {
+                cout << "Arquivo criado com exito\n";
 
-    cout << read_message(filename);
+            }
+            else
+            {
+                cout << "Problemas na abertura do arquivo\n";
+            }
+            system("pause");
+        }
+        else if (menu == 2)
+        {
+            lista_txt();
+        }
+        else if (menu == 3)
+        {
+
+        }
+    } while (menu==1 || menu==2);
     return 0;
 }
