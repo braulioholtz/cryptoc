@@ -41,22 +41,35 @@ string read_message(string filename)
 
         }
         arq_read.close();
+        return letra;
     }
-    return letra;
+    else
+    {
+        return "false";
+    }
+
 }
 
 // Listar arquivos já criptografados
-void lista_txt()
+void list_txt()
 {
-    /*DIR *dir;
+    DIR *dir;
+    struct dirent *lsdir;
+    int i = 0;
+    char file[5][150]={'0',' '}, i_a = '0';
+
     dir = opendir("criptografia/");
 
-    while ( ( lsdir = readdir(dir) ) != NULL )
+    while ( ( lsdir = readdir(dir) ) != NULL  )
     {
-        printf ("%s\n", lsdir->d_name);
+        i++;
+        // Não exibir . e ..
+        const string file_name = lsdir->d_name;
+    	if (file_name[0] == '.')
+    		continue;
+        cout << lsdir->d_name << "\n";
     }
-
-    closedir(dir);*/
+    closedir(dir);
 }
 
 
@@ -71,28 +84,27 @@ string Decrypt(string filename)
 }
 
 // Checar chave
-int check()
+int check(int e, int phi)
 {
-    int i;
-    /*
+    int i=0, FLAG = 0;
     for(i=3;e%i==0 && phi%i==0;i+2)
     {
         FLAG = 1;
-        return;
     }
     FLAG = 0;
-    */
 }
 
 // Função principal
 int main()
 {
-    int p = 0, q = 0, phi = 0, menu = 0;
+    int p = 254235442, q = 0, phi = 2525465465; // variaveis responsaveis pela criptografia (em teste)
+    int menu = 0;
     string message = "", filename = "";
 
-    do {
+    do
+    {
         system("cls");
-        cout << "Menu: \n1 - criar texto criptogrado\n2 - ler texto criptografado\n3 - Listar Arquivos criptografados e descriptografar\n";
+        cout << "Menu: \n1 - criar texto criptogrado\n2 - ler texto criptografado\n";
         cin >> menu;
         fflush(stdin); // Corrigir o bug na entrada de dados
         if (menu==1)
@@ -114,16 +126,33 @@ int main()
             {
                 cout << "Problemas na abertura do arquivo\n";
             }
+            cout << "Texto criptografado";
+            cout << read_message(filename);
+            cout << "Texto descriptografado";
+            cout << read_message(filename);
             system("pause");
         }
         else if (menu == 2)
         {
-            lista_txt();
-        }
-        else if (menu == 3)
-        {
+            list_txt();
+            cout << "Digite o arquivo sem .txt:\n";
+            cin >> filename;
+            fflush(stdin);
+            if (read_message(filename)=="false")
+            {
+                cout << "Arquivo não existe";
+                cout << "\n\n";
+                system("pause");
+            }
+            else
+            {
+                cout << read_message(filename);
+                cout << "\n\n";
+                system("pause");
+            }
 
         }
     } while (menu==1 || menu==2);
+    cout << check(p, phi); // apenas teste, começo criptografia
     return 0;
 }
