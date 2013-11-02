@@ -50,29 +50,6 @@ string read_message(string filename)
 
 }
 
-// Listar arquivos já criptografados
-void list_txt()
-{
-    DIR *dir;
-    struct dirent *lsdir;
-    int i = 0;
-    char file[5][150]={'0',' '}, i_a = '0';
-
-    dir = opendir("criptografia/");
-
-    while ( ( lsdir = readdir(dir) ) != NULL  )
-    {
-        i++;
-        // Não exibir . e ..
-        const string file_name = lsdir->d_name;
-    	if (file_name[0] == '.')
-    		continue;
-        cout << lsdir->d_name << "\n";
-    }
-    closedir(dir);
-}
-
-
 // Função para criptografar a mensagem
 string Encrypt(string filename)
 {
@@ -84,7 +61,7 @@ string Decrypt(string filename)
 }
 
 // Checar chave
-int check(int e, int phi)
+int check(long int e, long int phi)
 {
     int i=0, FLAG = 0;
     for(i=3;e%i==0 && phi%i==0;i+2)
@@ -97,7 +74,8 @@ int check(int e, int phi)
 // Função principal
 int main()
 {
-    int p = 254235442, q = 0, phi = 2525465465; // variaveis responsaveis pela criptografia (em teste)
+    long int p1 = 0, p2 = 0; // Números primos
+    int phi = 2525465465; // variaveis responsaveis pela criptografia (em teste)
     int menu = 0;
     string message = "", filename = "";
 
@@ -134,7 +112,6 @@ int main()
         }
         else if (menu == 2)
         {
-            list_txt();
             cout << "Digite o arquivo sem .txt:\n";
             cin >> filename;
             fflush(stdin);
@@ -153,6 +130,7 @@ int main()
 
         }
     } while (menu==1 || menu==2);
-    cout << check(p, phi); // apenas teste, começo criptografia
+    cin >> p1 >> p2;
+    cout << check(p1, phi); // apenas teste, começo criptografia
     return 0;
 }
