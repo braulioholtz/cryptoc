@@ -1,0 +1,18 @@
+warning: The selected output language "brazil" has not been updated
+since release 1.8.0.  As a result some sentences may appear in English.
+
+C:/Users/BraulioCesar/Documents/c++/PIM/main.cpp:183: warning: The following parameters of check(int e, long int phi) are not documented:
+  parameter 'phi'
+C:/Users/BraulioCesar/Documents/c++/PIM/main.cpp:155: warning: argument 'letter' of command @param is not found in the argument list of Decrypt(string message, int e, int n)
+C:/Users/BraulioCesar/Documents/c++/PIM/main.cpp:155: warning: The following parameters of Decrypt(string message, int e, int n) are not documented:
+  parameter 'message'
+  parameter 'e'
+  parameter 'n'
+C:/Users/BraulioCesar/Documents/c++/PIM/main.cpp:126: warning: argument 'letter' of command @param is not found in the argument list of Encrypt(string message, int e, int n)
+C:/Users/BraulioCesar/Documents/c++/PIM/main.cpp:126: warning: The following parameters of Encrypt(string message, int e, int n) are not documented:
+  parameter 'message'
+  parameter 'e'
+  parameter 'n'
+C:/Users/BraulioCesar/Documents/c++/PIM/main.cpp:14: warning: argument 'Get' of command @param is not found in the argument list of NumberToString(int pNumber)
+C:/Users/BraulioCesar/Documents/c++/PIM/main.cpp:14: warning: The following parameters of NumberToString(int pNumber) are not documented:
+  parameter 'pNumber'
