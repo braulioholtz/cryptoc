@@ -7,14 +7,38 @@
 
 using namespace std;
 
-string folder = "criptografia/"; // Facilitar manutenção
+string folder = "criptografia/"; // Facilitar manuten��o
 
-// Função para criar uma mensagem
+/********************************************//**
+ * \brief Convert Numbers to String
+ *
+ * \param Get int (T)
+ * \return string
+ *
+ * [Converting numbers to strings and strings to numbers] [http://www.cplusplus.com/forum/articles/9645/])
+ ***********************************************/
+template <typename T>
+string NumberToString(int pNumber)
+{
+    ostringstream oOStrStream;
+    oOStrStream << pNumber;
+    return oOStrStream.str();
+}
+
+
+/********************************************//**
+ * \brief For create txt with messages
+ *
+ * \param message (string) with the message
+ * \param filename (string) with filename
+ * \return true or false (if sucess return true)
+ *
+ ***********************************************/
 bool create_message(string message, string filename)
 {
     ofstream arq;
     filename = folder+filename+".txt";
-    arq.open(filename.c_str()); // fix: Colocar uma variavel para criação de várias mensagens
+    arq.open(filename.c_str()); // fix: Colocar uma variavel para cria��o de v�rias mensagens
     if (arq.is_open())  // Se houve erro na abertura
     {
         arq << message; /* Grava a string, caractere a caractere */
@@ -28,7 +52,13 @@ bool create_message(string message, string filename)
     }
 }
 
-// Função para ler a mensagem
+/********************************************//**
+ * \brief For read txt
+ *
+ * \param filename (string) with filename for read
+ * \return string with the message
+ *
+ ***********************************************/
 string read_message(string filename)
 {
     filename = folder+filename+".txt";
@@ -51,7 +81,14 @@ string read_message(string filename)
 
 }
 
-// Função para concatenar as variaveis string e int
+/********************************************//**
+ * \brief Concatenate string with Integer
+ *
+ * \param name (string)
+ * \param i (integer)
+ * \return string with the result concatenation
+ *
+ ***********************************************/
 string concatenate(std::string const& name, int i)
 {
     stringstream s;
@@ -59,13 +96,21 @@ string concatenate(std::string const& name, int i)
     return s.str();
 }
 
+/********************************************//**
+ * \brief Convert text for ASCII
+ *
+ * \param letter (string)
+ * \return string with the ASCII Code
+ *
+ * [Converting string to ASCII] [http://stackoverflow.com/questions/6709795/converting-string-to-ascii]
+ ***********************************************/
 string convertToASCII(string letter)
 {
     string result = "";
     for (int i = 0; i < letter.length(); i++)
     {
         char x = letter.at(i);
-        // fix ASCII code :)
+        /**<  fix ASCII code :) */
         if (int(x)<10 || int(x)==0)
             result = result + "00";
         if (int(x)<100 && int(x)>9)
@@ -76,38 +121,92 @@ string convertToASCII(string letter)
 }
 
 
-// Função para criptografar a mensagem
-string Encrypt(string message)
+/********************************************//**
+ * \brief Function for Encrypt message
+ * \todo Correct bug
+ *
+ * \param letter (string)
+ * \return string with the ASCII Code
+ *
+ ***********************************************/
+string Encrypt(string message, int e, int n)
 {
     string Result;
-    Result = convertToASCII(message);
+    message = convertToASCII("t"); // DEBUG
+    unsigned long m=0;
+    unsigned long message_int = 0;
+    istringstream ( message ) >> m;
+    message_int = m;
+    Result = message;
+    unsigned long res = 1;
+    while (e > 0) {
+        if (e % 2 != 0) {
+            res = (message_int*res) % n;
+        }
+        m = (message_int*message_int) % n;
+        e /= 2;
+    }
+    Result = NumberToString(res);
     return Result;
 }
 
-// Função para descriptografar a mensagem
-string Decrypt(string filename)
+/********************************************//**
+ * \brief Function for Decrypt message
+ * \todo Correct bug
+ *
+ * \param letter (string)
+ * \return string with the ASCII Code
+ *
+ ***********************************************/
+string Decrypt(string message, int e, int n)
 {
+    string Result;
+    unsigned long m=0;
+    unsigned long message_int = 0;
+    istringstream ( message ) >> m;
+    message_int = m;
+    Result = message;
+    unsigned long res = 1;
+    while (e > 0) {
+        if (e % 2 != 0) {
+            res = (res*message_int) % n;
+        }
+        m = (res*message_int) % n;
+        e /= 2;
+    }
+    Result = NumberToString(res);
+    return Result;
 }
 
-// Checar chave
+/********************************************//**
+ * \brief Function for check public key
+ *
+ * \param e - public key
+ * \return Int, if validate key return FLAG 0
+ *
+ ***********************************************/
 int check(int e, long int phi)
 {
     int i=0, FLAG = 0;
     for(i=3;e%i==0 && phi%i==0;i+2)
-    {
         FLAG = 1;
-    }
     FLAG = 0;
     return FLAG;
 }
 
-// Função principal
+/********************************************//**
+ * \brief Function for check public key
+ *
+ * \return int 0 for end
+ *
+ ***********************************************/
 int main()
 {
-    long int p1 = 7, p2 = 17; // Números primos
+    long int p1 = 7, p2 = 17; // N�meros primos
     long int n = 0, phi = 0; // variaveis responsaveis pela criptografia (em teste)
     int menu = 0, e=0, FLAG=0;
     string message = "", filename = "";
+    //cout << Encrypt("testando");
     do
     {
         system("cls");
@@ -135,7 +234,7 @@ int main()
             }
             cout << "Texto descriptografado\n";
             cout << read_message(filename);
-            message = Encrypt(message);
+//            message = Encrypt(message);
             if (create_message(message, filename))
             {
                 cout << "\nTexto criptografado\n";
@@ -154,7 +253,7 @@ int main()
             fflush(stdin);
             if (read_message(filename)=="false")
             {
-                cout << "Arquivo não existe";
+                cout << "Arquivo n�o existe";
                 cout << "\n\n";
                 system("pause");
             }
@@ -162,21 +261,22 @@ int main()
             {
                 cout << read_message(filename);
                 cout << "\n\n";
-                cout << Encrypt(filename);
+//                cout << Encrypt(filename);
                 system("pause");
             }
 
         }
     } while (menu==1 || menu==2);
     n = p1 * p2;
-    phi=(p1-1)*(p2-1);
-    cout << phi << "\n";
-    /*do
+    n=(p1-1)*(p2-1);
+    cout << n << "\n";
+    do
     {
         cin >> e; // ?
-        FLAG = check(e, phi); // apenas teste, começo criptografia
-        Encrypt(e);
+        FLAG = check(e, n); // apenas teste, come�o criptografia
     }while(FLAG==1);
-    cout << FLAG;*/
+    cout << Encrypt(read_message("test"), e, n)<< "\n\n->";
+    cout << Decrypt(Encrypt(read_message("test"), e, n), e, n);
+    cout << FLAG;
     return 0;
 }
