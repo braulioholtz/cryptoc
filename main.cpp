@@ -18,7 +18,7 @@ string folder = "criptografia/"; // Facilitar manutenção
  * [Converting numbers to strings and strings to numbers] [http://www.cplusplus.com/forum/articles/9645/])
  ***********************************************/
 template <typename T>
-string NumberToString(int pNumber)
+string NumberToString(T pNumber)
 {
     ostringstream oOStrStream;
     oOStrStream << pNumber;
@@ -111,10 +111,11 @@ string convertToASCII(string letter)
     {
         char x = letter.at(i);
         /**<  fix ASCII code :) */
-        if (int(x)<10 || int(x)==0)
+        if (int(x)<10)
             result = result + "00";
         if (int(x)<100 && int(x)>9)
             result = result + "0";
+
         result = concatenate(result, int(x));
     }
     return result;
@@ -133,19 +134,19 @@ string Encrypt(string message, int e, int n)
 {
     string Result;
     message = convertToASCII("t"); // DEBUG
-    unsigned long m=0;
-    unsigned long message_int = 0;
-    istringstream ( message ) >> m;
-    message_int = m;
-    Result = message;
-    unsigned long res = 1;
-    while (e > 0) {
-        if (e % 2 != 0) {
-            res = (message_int*res) % n;
-        }
-        m = (message_int*message_int) % n;
-        e /= 2;
+    long m=0;
+
+    int res = 0;
+    for (int i = 0; i < message.size(); i=i+3)
+    {
+        m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
+        // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
+        m = (m*m) % n; // don't work :(
+        m = m % n;
+        cout << "te" << m<< "te";
     }
+
+    res = m;
     Result = NumberToString(res);
     return Result;
 }
@@ -275,8 +276,8 @@ int main()
         cin >> e; // ?
         FLAG = check(e, n); // apenas teste, começo criptografia
     }while(FLAG==1);
-    cout << Encrypt(read_message("test"), e, n)<< "\n\n->";
-    cout << Decrypt(Encrypt(read_message("test"), e, n), e, n);
-    cout << FLAG;
+    cout << Encrypt(read_message("test"), e, n)<< "\n\n<-";
+    //cout << Decrypt(Encrypt(read_message("test"), e, n), e, n);
+    //cout << FLAG;
     return 0;
 }
