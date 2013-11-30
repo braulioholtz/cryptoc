@@ -7,7 +7,7 @@
 
 using namespace std;
 
-string folder = "criptografia/"; // Facilitar manutenção
+string folder = "criptografia/"; // Folder with files
 
 /********************************************//**
  * \brief Convert Numbers to String
@@ -130,22 +130,24 @@ string convertToASCII(string letter)
  * \return string with the ASCII Code
  *
  ***********************************************/
-string Encrypt(string message, int e, int n)
+string Encrypt(long long message, int e, int n)
 {
     string Result;
-    message = convertToASCII("t"); // DEBUG
-    long m=0;
+    long long m_c;
+    message = 116; // DEBUG
+    long long m=1;
 
     int res = 0;
-    for (int i = 0; i < message.size(); i=i+3)
+    for (int i = 0; i < sizeof(message); i=i+3)
     {
-        m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
+        //m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
         // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
-        m = (m*m) % n; // don't work :(
+        m = (m*message) % n; // don't work :(
         m = m % n;
-        cout << "te" << m<< "te";
-    }
+        cout << "\n-" << m<< "-\n"; // result loop
 
+    }
+    cout << "-Fim-" << m<< "-Fim-";
     res = m;
     Result = NumberToString(res);
     return Result;
@@ -159,22 +161,24 @@ string Encrypt(string message, int e, int n)
  * \return string with the ASCII Code
  *
  ***********************************************/
-string Decrypt(string message, int e, int n)
+string Decrypt(long long message, int e, int n)
 {
     string Result;
-    unsigned long m=0;
-    unsigned long message_int = 0;
-    istringstream ( message ) >> m;
-    message_int = m;
-    Result = message;
-    unsigned long res = 1;
-    while (e > 0) {
-        if (e % 2 != 0) {
-            res = (res*message_int) % n;
-        }
-        m = (res*message_int) % n;
-        e /= 2;
+    long long m_c;
+    message = 116; // DEBUG
+    long long m=1;
+
+    int res = 0;
+    for (int i = 0; i < sizeof(message); i=i+3)
+    {
+        //m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
+        // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
+        m = (message*m) % n; // don't work :(
+        m = m % n;
+
     }
+    cout << "te" << m<< "te";
+    res = m;
     Result = NumberToString(res);
     return Result;
 }
@@ -196,7 +200,7 @@ int check(int e, long int phi)
 }
 
 /********************************************//**
- * \brief Function for check public key
+ * \brief Main Function
  *
  * \return int 0 for end
  *
@@ -204,7 +208,7 @@ int check(int e, long int phi)
 int main()
 {
     long int p1 = 7, p2 = 17; // Números primos
-    long int n = 0, phi = 0; // variaveis responsaveis pela criptografia (em teste)
+    long int n = 0; // variaveis responsaveis pela criptografia (em teste)
     int menu = 0, e=0, FLAG=0;
     string message = "", filename = "";
     //cout << Encrypt("testando");
@@ -249,7 +253,7 @@ int main()
         }
         else if (menu == 2)
         {
-            cout << "Digite o arquivo sem .txt:\n";
+            /*cout << "Digite o arquivo sem .txt:\n";
             cin >> filename;
             fflush(stdin);
             if (read_message(filename)=="false")
@@ -260,23 +264,28 @@ int main()
             }
             else
             {
-                cout << read_message(filename);
+                cout << "\n O arquivo está assim: " <<read_message(filename);
                 cout << "\n\n";
-//                cout << Encrypt(filename);
+                //cout << Encrypt(filename);
                 system("pause");
-            }
-
+            }*/
+            n = p1 * p2;
+            n=(p1-1)*(p2-1);
+            cout << n << "\n";
+            do
+            {
+                cout << "\n Coloque a chave (5):";
+                cin >> e; // ?
+                FLAG = check(e, n); // apenas teste, começo criptografia
+            }while(FLAG==1);
+            cout << "\nArquivo criptografado\n->";
+            cout << Encrypt(116, e, n)<< "<-\n\n";
+            cout << "\nArquivo descriptografado\n->";
+            cout << Decrypt(116, e, n)<< "<-\n\n";
+            system("pause");
         }
     } while (menu==1 || menu==2);
-    n = p1 * p2;
-    n=(p1-1)*(p2-1);
-    cout << n << "\n";
-    do
-    {
-        cin >> e; // ?
-        FLAG = check(e, n); // apenas teste, começo criptografia
-    }while(FLAG==1);
-    cout << Encrypt(read_message("test"), e, n)<< "\n\n<-";
+
     //cout << Decrypt(Encrypt(read_message("test"), e, n), e, n);
     //cout << FLAG;
     return 0;
