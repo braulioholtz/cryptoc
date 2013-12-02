@@ -134,11 +134,11 @@ string Encrypt(long long message, int e, int n)
 {
     string Result;
     long long m_c;
-    message = 116; // DEBUG
+    message = 19; // DEBUG
     long long m=1;
 
     int res = 0;
-    for (int i = 0; i < sizeof(message); i=i+3)
+    for (int i = 0; i < e; i++)
     {
         //m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
         // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
@@ -165,15 +165,15 @@ string Decrypt(long long message, int e, int n)
 {
     string Result;
     long long m_c;
-    message = 116; // DEBUG
+    message = 66; // DEBUG
     long long m=1;
 
     int res = 0;
-    for (int i = 0; i < sizeof(message); i=i+3)
+    for (int i = 0; i < e; i++)
     {
         //m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
         // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
-        m = (message*m) % n; // don't work :(
+        m = (message * m) % n; // don't work :(
         m = m % n;
 
     }
@@ -190,7 +190,22 @@ string Decrypt(long long message, int e, int n)
  * \return Int, if validate key return FLAG 0
  *
  ***********************************************/
-int check(int e, long int phi)
+int check(int e, int phi)
+{
+    int i=0, FLAG = 0;
+    for(i=3;e%i==0 && phi%i==0;i+2)
+        FLAG = 1;
+    FLAG = 0;
+    return FLAG;
+}
+/********************************************//**
+ * \brief Public key
+ *
+ * \param e - public key
+ * \return Int, if validate key return FLAG 0
+ *
+ ***********************************************/
+int check(int e, long long phi)
 {
     int i=0, FLAG = 0;
     for(i=3;e%i==0 && phi%i==0;i+2)
@@ -207,8 +222,8 @@ int check(int e, long int phi)
  ***********************************************/
 int main()
 {
-    long int p1 = 7, p2 = 17; // Números primos
-    long int n = 0; // variaveis responsaveis pela criptografia (em teste)
+    long long p1 = 7, p2 = 17; // Números primos
+    long long n = 0, phi = 0, d = 1, s = 0; // variaveis responsaveis pela criptografia (em teste)
     int menu = 0, e=0, FLAG=0;
     string message = "", filename = "";
     //cout << Encrypt("testando");
@@ -270,7 +285,7 @@ int main()
                 system("pause");
             }*/
             n = p1 * p2;
-            n=(p1-1)*(p2-1);
+            phi=(p1-1)*(p2-1);
             cout << n << "\n";
             do
             {
@@ -278,6 +293,14 @@ int main()
                 cin >> e; // ?
                 FLAG = check(e, n); // apenas teste, começo criptografia
             }while(FLAG==1);
+            do
+            {
+                s = (d*e)%phi;
+                d++;
+            }while(s!=1);
+            d = d-1;
+            cout << "\Chave Publica: {" << e << ", " << n << "}";
+            cout << "\Chave Privada: {" << d << ", " << n << "}";
             cout << "\nArquivo criptografado\n->";
             cout << Encrypt(116, e, n)<< "<-\n\n";
             cout << "\nArquivo descriptografado\n->";
