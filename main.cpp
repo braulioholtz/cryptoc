@@ -1,13 +1,12 @@
 #include <iostream>
 #include <stdlib.h>
-#include <dirent.h>
 #include <sstream>
-#include <string>
+#include <string.h>
 #include <fstream>
 
 using namespace std;
 
-string folder = "criptografia/"; // Folder with files
+string folder = "criptografia/", tp_file = ".txt"; // Folder with files
 
 /********************************************//**
  * \brief Convert Numbers to String
@@ -37,7 +36,7 @@ string NumberToString(T pNumber)
 bool create_message(string message, string filename)
 {
     ofstream arq;
-    filename = folder+filename+".txt";
+    filename = folder+filename+tp_file;
     arq.open(filename.c_str()); // fix: Colocar uma variavel para criação de várias mensagens
     if (arq.is_open())  // Se houve erro na abertura
     {
@@ -47,9 +46,7 @@ bool create_message(string message, string filename)
 
     }
     else
-    {
         return false;
-    }
 }
 
 /********************************************//**
@@ -61,24 +58,19 @@ bool create_message(string message, string filename)
  ***********************************************/
 string read_message(string filename)
 {
-    filename = folder+filename+".txt";
+    filename = folder+filename+tp_file;
     ifstream arq_read(filename.c_str());
     string letra="";
     if (arq_read.is_open())  // Se houve erro na abertura
     {
         while(!arq_read.eof())
-        {
             getline(arq_read, letra); // Saves the line in letra.
 
-        }
         arq_read.close();
         return letra;
     }
     else
-    {
         return "false";
-    }
-
 }
 
 /********************************************//**
@@ -87,7 +79,7 @@ string read_message(string filename)
  * \param name (string)
  * \param i (integer)
  * \return string with the result concatenation
- *
+ *#include <string.h>
  ***********************************************/
 string concatenate(std::string const& name, int i)
 {
@@ -118,6 +110,7 @@ string convertToASCII(string letter)
 
         result = concatenate(result, int(x));
     }
+
     return result;
 }
 
@@ -130,26 +123,36 @@ string convertToASCII(string letter)
  * \return string with the ASCII Code
  *
  ***********************************************/
-string Encrypt(long long message, int e, int n)
+string Encrypt(string message, int e, int n)
 {
-    string Result;
+    string Result, temp;
     long long m_c;
-    message = 19; // DEBUG
-    long long m=1;
+    message = convertToASCII(read_message(message)); // read txt and convert to ASCII
 
-    int res = 0;
-    for (int i = 0; i < e; i++)
+    //m_c = std::stol(message); // DEBUG
+    std::stringstream buffer(message);
+    buffer >> m_c;
+    long long m;
+    for (int i = 0; i < message.length(); i +=3 )
     {
-        //m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
-        // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
-        m = (m*message) % n; // don't work :(
-        m = m % n;
-        cout << "\n-" << m<< "-\n"; // result loop
+        temp = NumberToString(message[i]) + NumberToString(message[i+1]) + NumberToString(message[i+2]);
+        m = 1;
+        std::stringstream buffer(temp);
+        buffer >> m_c;
+        for (int j = 0; j < e; j++)
+        {
+            // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
+            m = (m*m_c) % n;
+            m = m % n;
 
+        }
+        /**<  fix 0 left  */
+        if (int(m)<10)
+            Result = Result + "00";
+        if (int(m)<100 && int(m)>9)
+            Result = Result + "0";
+        Result = Result + NumberToString(m);
     }
-    cout << "-Fim-" << m<< "-Fim-";
-    res = m;
-    Result = NumberToString(res);
     return Result;
 }
 
@@ -161,25 +164,38 @@ string Encrypt(long long message, int e, int n)
  * \return string with the ASCII Code
  *
  ***********************************************/
-string Decrypt(long long message, int e, int n)
+string Decrypt(string message, int e, int n)
 {
-    string Result;
+    string Result, temp;
     long long m_c;
-    message = 66; // DEBUG
-    long long m=1;
+    message = Encrypt(message, e , n); // DEBUG
 
-    int res = 0;
-    for (int i = 0; i < e; i++)
+    //m_c = std::stol(message); // DEBUG
+    std::stringstream buffer(message);
+    buffer >> m_c;
+    long long m;
+    // depois quebrar a mensagem em blocos de 9 caracteres
+    //message = "19191919";
+    for (int i = 0; i < message.length(); i +=3 )
     {
-        //m << message[i] << message[i+1] << message[i+2]; // concatenando os 3 caracteres ASCII
-        // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
-        m = (message * m) % n; // don't work :(
-        m = m % n;
+        temp = NumberToString(message[i]) + NumberToString(message[i+1]) + NumberToString(message[i+2]);
+        m = 1;
+        std::stringstream buffer(temp);
+        buffer >> m_c;
+        for (int j = 0; j < e; j++)
+        {
+            // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
+            m = (m_c*m) % n;
+            m = m % n;
 
+        }
+        // fix 0 left
+        if (int(m)<10)
+            Result = Result + "00";
+        if (int(m)<100 && int(m)>9)
+            Result = Result + "0";
+        Result = Result + NumberToString(m);
     }
-    cout << "te" << m<< "te";
-    res = m;
-    Result = NumberToString(res);
     return Result;
 }
 
@@ -191,21 +207,6 @@ string Decrypt(long long message, int e, int n)
  *
  ***********************************************/
 int check(int e, int phi)
-{
-    int i=0, FLAG = 0;
-    for(i=3;e%i==0 && phi%i==0;i+2)
-        FLAG = 1;
-    FLAG = 0;
-    return FLAG;
-}
-/********************************************//**
- * \brief Public key
- *
- * \param e - public key
- * \return Int, if validate key return FLAG 0
- *
- ***********************************************/
-int check(int e, long long phi)
 {
     int i=0, FLAG = 0;
     for(i=3;e%i==0 && phi%i==0;i+2)
@@ -226,11 +227,10 @@ int main()
     long long n = 0, phi = 0, d = 1, s = 0; // variaveis responsaveis pela criptografia (em teste)
     int menu = 0, e=0, FLAG=0;
     string message = "", filename = "";
-    //cout << Encrypt("testando");
     do
     {
         system("cls");
-        cout << "Menu: \n1 - criar texto criptogrado\n2 - ler texto criptografado\n";
+        cout << "Menu: \n1 - criar texto\n2 - ler texto criptografado\n";
         cin >> menu;
         fflush(stdin); // Corrigir o bug na entrada de dados
         if (menu==1)
@@ -268,22 +268,6 @@ int main()
         }
         else if (menu == 2)
         {
-            /*cout << "Digite o arquivo sem .txt:\n";
-            cin >> filename;
-            fflush(stdin);
-            if (read_message(filename)=="false")
-            {
-                cout << "Arquivo não existe";
-                cout << "\n\n";
-                system("pause");
-            }
-            else
-            {
-                cout << "\n O arquivo está assim: " <<read_message(filename);
-                cout << "\n\n";
-                //cout << Encrypt(filename);
-                system("pause");
-            }*/
             n = p1 * p2;
             phi=(p1-1)*(p2-1);
             cout << n << "\n";
@@ -299,17 +283,17 @@ int main()
                 d++;
             }while(s!=1);
             d = d-1;
-            cout << "\Chave Publica: {" << e << ", " << n << "}";
+            cout << "\n Digite o nome do arquivo:";
+            cin >> filename; // ?
+            cout << "\n\Chave Publica: {" << e << ", " << n << "}";
             cout << "\Chave Privada: {" << d << ", " << n << "}";
-            cout << "\nArquivo criptografado\n->";
-            cout << Encrypt(116, e, n)<< "<-\n\n";
-            cout << "\nArquivo descriptografado\n->";
-            cout << Decrypt(116, e, n)<< "<-\n\n";
+            cout << "\nArquivo criptografado:\n";
+            cout << Encrypt(filename, e, n)<< "<-\n\n";
+            cout << "\nArquivo descriptografado:\n";
+            cout << Decrypt(filename, e, n)<< "<-\n\n";
             system("pause");
         }
     } while (menu==1 || menu==2);
 
-    //cout << Decrypt(Encrypt(read_message("test"), e, n), e, n);
-    //cout << FLAG;
     return 0;
 }
