@@ -164,7 +164,7 @@ string Encrypt(string message, int e, int n)
  * \return string with the ASCII Code
  *
  ***********************************************/
-string Decrypt(string message, int e, int n)
+string Decrypt(string message, int d, int n, int e) // int e temporario
 {
     string Result, temp;
     long long m_c;
@@ -182,10 +182,10 @@ string Decrypt(string message, int e, int n)
         m = 1;
         std::stringstream buffer(temp);
         buffer >> m_c;
-        for (int j = 0; j < e; j++)
+        for (int j = 0; j < d; j++)
         {
             // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
-            m = (m_c*m) % n;
+            m = (m*m_c) % n;
             m = m % n;
 
         }
@@ -290,7 +290,7 @@ int main()
             cout << "\nArquivo criptografado:\n";
             cout << Encrypt(filename, e, n)<< "<-\n\n";
             cout << "\nArquivo descriptografado:\n";
-            cout << Decrypt(filename, e, n)<< "<-\n\n";
+            cout << Decrypt(filename, d, n, e)<< "<-\n\n";
             system("pause");
         }
     } while (menu==1 || menu==2);
