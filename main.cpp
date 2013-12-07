@@ -138,10 +138,7 @@ string Encrypt(string message, int e, int n)
         std::stringstream buffer(temp);
         buffer >> m_c;
         for (int j = 0; j < e; j++)
-        {
-            // based in http://cppgm.blogspot.com.br/2008/01/rsa-algorithm.html
             m = (m*m_c) % n;
-        }
         m = m % n;
         if (m<10000000)
             Result = Result + "0"; // fix break characters
@@ -166,7 +163,7 @@ string Decrypt(string message, int d, int n)
     string Result, temp;
     long long m_c = 0;
     unsigned int i;
-    message = read_message(message); // read txt and convert to ASCII
+    message = read_message(message);
     long long m;
     for (i = 0; i < message.length(); i+=8 )
     {
@@ -189,8 +186,8 @@ string Decrypt(string message, int d, int n)
 /********************************************//**
  * \brief Function for check public key
  *
- * \param e - public key
- * \return long long 
+ * \param int phi
+ * \return e - public key
  *
  ***********************************************/
 long long check(int phi)
@@ -221,7 +218,7 @@ long long tot_euler(long long p, long long q)
     return phi;
 }
 /********************************************//**
- * \brief Function for calcular chave privada
+ * \brief Function to calculate the private key
  *
  * \param e - public key
  * \return Int, if validate key return FLAG 0
@@ -250,7 +247,7 @@ int main()
     string message = "", filename = "";
     int menu = 0;
     long long p = 4229, q = 4283; // Números primos
-    long long n = 0, phi = 0, e = 0; // variaveis responsaveis pela criptografia (em teste)
+    long long n = 0, phi = 0, e = 0;
     n = p * q;
     phi=tot_euler(p, q);
     e = check(phi);
@@ -261,7 +258,7 @@ int main()
         system("cls");
         cout << "Menu: \n1 - Criar texto\n2 - Criptografar\n3 - Descriptografar\n4 - Sair\n";
         cin >> menu;
-        fflush(stdin); // Corrigir o bug na entrada de dados
+        fflush(stdin);
         switch (menu)
         {
             case 1:
@@ -272,7 +269,6 @@ int main()
                 cout << "Digite a sua mensagem:\n";
                 getline(cin, message);
                 fflush(stdin);
-                //getline(cin, message);
                 if (create_message(message, filename))  // Se houve erro na abertura
                     cout << "Arquivo criado com exito\n";
                 else
@@ -282,7 +278,7 @@ int main()
             case 2:
                 system("cls");
                 cout << "\n Digite o nome do arquivo:";
-                cin >> filename; // ?
+                cin >> filename;
                 if (create_message(Encrypt(filename, e, n), filename))  // Se houve erro na abertura
                     cout << "Arquivo criptogrado com sucesso\n";
                 else
@@ -292,7 +288,7 @@ int main()
             case 3:
                 system("cls");
                 cout << "\n Digite o nome do arquivo:";
-                cin >> filename; // ?
+                cin >> filename;
                 cout << "\Chave Privada: {" << calc_private(e, phi) << ", " << n << "}";
                 if (create_message(Decrypt(filename, calc_private(e, phi), n), filename))  // Se houve erro na abertura
                     cout << "\nArquivo criptogrado com sucesso\n";
